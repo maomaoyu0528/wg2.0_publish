@@ -1,0 +1,18 @@
+FROM base:1.0.0
+MAINTAINER wood
+VOLUME /tmp
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo 'Asia/Shanghai' >/etc/timezone
+RUN mkdir -p /var/lib/system
+ENV ARTIFACT=tron
+COPY ././tron/lib /var/lib/tron/lib
+COPY ././common-libs /var/lib/tron/common-libs
+COPY ././springProfiles /var/lib/tron/springProfiles
+COPY ././tron/*.jar /$ARTIFACT.jar
+ENV JAVA_OPTS="\
+-Xms2048m \
+-Xmx2048m \
+-Xss512K \
+"
+EXPOSE 8072
+ENTRYPOINT java -Dloader.path=/var/lib/tron/lib,/var/lib/tron/common-libs -jar /$ARTIFACT.jar --spring.config.location=/var/lib/tron/springProfiles/game/application-tron.yaml

@@ -1,0 +1,128 @@
+def currentDate = new Date(currentBuild.startTimeInMillis)
+def formattedDate = currentDate.format('yyyyMMddHHmm')
+
+def imageRepo = "912643663034.dkr.ecr.ap-southeast-1.amazonaws.com/"
+
+def systemImageName = "system-image-game:"+formattedDate
+def systemDockerFileName = "dockerfile-system-game"
+
+def crashImageName = "crash-image-game:"+formattedDate
+def crashDockerFileName = "dockerfile-crash-game"
+
+def threadsImageName = "threads-image-game:"+formattedDate
+def threadsDockerFileName = "dockerfile-threads-game"
+
+def webImageName = "web-image-game:"+formattedDate
+def webDockerFileName = "dockerfile-web-game"
+
+def wsImageName = "ws-image-game:"+formattedDate
+def wsDockerFileName = "dockerfile-ws-game"
+
+def tonImageName = "ton-image-game:"+formattedDate
+def tonDockerFileName = "dockerfile-ton-game"
+
+def tronImageName = "tron-image-game:"+formattedDate
+def tronDockerFileName = "dockerfile-tron-game"
+
+pipeline {
+    agent any
+    parameters {
+        extendedChoice name: 'imageBuild',
+                type: 'PT_CHECKBOX',
+                defaultValue: 'system',
+                description: 'Choose your image for build',
+                value: 'system,crash,threads,web,ws,ton,tron'
+    }
+    stages {
+        stage('check out') {
+            steps{
+                echo "${env.WORKSPACE}"
+                git url: "https://github.com/maomaoyu0528/wg1.0_publish.git",
+                        credentialsId: "d4873a77-851b-4cc6-b45e-bf274aeb85b1",
+                        branch: "main"
+            }
+        }
+        stage('docker build') {
+            steps {
+                script {
+                    def workspace = "${env.WORKSPACE}"
+                    echo "workspace is :${workspace}"
+                    echo "Your build image is ${params.imageBuild}"
+                    def selectedOptions = "${params.imageBuild}"
+                    if (selectedOptions.contains('system')) {
+                        echo "system is selected"
+                        docker.build(imageRepo+systemImageName,"-f "+workspace+"/dockerFiles/game/"+systemDockerFileName+" .")
+                    }
+                    if(selectedOptions.contains('crash')) {
+                        echo "crash is selected"
+                        docker.build(imageRepo+crashImageName,"-f "+workspace+"/dockerFiles/game/"+crashDockerFileName+" .")
+                    }
+                    if(selectedOptions.contains('threads')) {
+                        echo "threads is selected"
+                        docker.build(imageRepo+threadsImageName,"-f "+workspace+"/dockerFiles/game/"+threadsDockerFileName+" .")
+                    }
+                    if(selectedOptions.contains('web')) {
+                        echo "web is selected"
+                        docker.build(imageRepo+webImageName,"-f "+workspace+"/dockerFiles/game/"+webDockerFileName+" .")
+                    }
+                    if(selectedOptions.contains('ws')) {
+                        echo "ws is selected"
+                        docker.build(imageRepo+wsImageName,"-f "+workspace+"/dockerFiles/game/"+wsDockerFileName+" .")
+                    }
+		    if(selectedOptions.contains('ton')) {
+                        echo "ton is selected"
+                        docker.build(imageRepo+tonImageName,"-f "+workspace+"/dockerFiles/game/"+tonDockerFileName+" .")
+                    }
+					if(selectedOptions.contains('tron')) {
+                        echo "tron is selected"
+                        docker.build(imageRepo+tronImageName,"-f "+workspace+"/dockerFiles/game/"+tronDockerFileName+" .")
+                    }
+                }
+            }
+        }
+        stage('docker push') {
+            steps {
+                script {
+                    echo "Your push image is ${params.imageBuild}"
+                    echo "this time,push image tag Version is :${formattedDate}"
+                    def selectedOptions = "${params.imageBuild}"
+                    if (selectedOptions.contains('system')) {
+                        echo "system is selected"
+                        echo "system image detail: ${imageRepo}${systemImageName}"
+                        docker.image(imageRepo+systemImageName).push(formattedDate)
+                    }
+                    if(selectedOptions.contains('crash')) {
+                        echo "crash is selected"
+                        echo "crash image detail: ${imageRepo}${crashImageName}"
+                        docker.image(imageRepo+crashImageName).push(formattedDate)
+                    }
+                    if(selectedOptions.contains('threads')) {
+                        echo "threads is selected"
+                        echo "threads image detail: ${imageRepo}${threadsImageName}"
+                        docker.image(imageRepo+threadsImageName).push(formattedDate)
+                    }
+                    if(selectedOptions.contains('web')) {
+                        echo "web is selected"
+                        echo "web image detail: ${imageRepo}${webImageName}"
+                        docker.image(imageRepo+webImageName).push(formattedDate)
+                    }
+                    if(selectedOptions.contains('ws')) {
+                        echo "ws is selected"
+                        echo "ws image detail: ${imageRepo}${wsImageName}"
+                        docker.image(imageRepo+wsImageName).push(formattedDate)
+                    }
+		    if(selectedOptions.contains('ton')) {
+                        echo "ton is selected"
+                        echo "ton image detail: ${imageRepo}${tonImageName}"
+                        docker.image(imageRepo+tonImageName).push(formattedDate)
+                    }
+		    if(selectedOptions.contains('tron')) {
+                        echo "tron is selected"
+                        echo "tron image detail: ${imageRepo}${tronImageName}"
+                        docker.image(imageRepo+tronImageName).push(formattedDate)
+                    }
+                }
+            }
+        }
+    }
+}

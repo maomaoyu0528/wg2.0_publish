@@ -1,0 +1,18 @@
+FROM base:1.0.0
+MAINTAINER wood
+VOLUME /tmp
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo 'Asia/Shanghai' >/etc/timezone
+RUN mkdir -p /var/lib/ws
+ENV ARTIFACT=ws
+COPY ././ws/lib /var/lib/ws/lib
+COPY ././common-libs /var/lib/ws/common-libs
+COPY ././springProfiles /var/lib/ws/springProfiles
+COPY ././ws/*.jar /$ARTIFACT.jar
+ENV JAVA_OPTS="\
+-Xms2048m \
+-Xmx2048m \
+-Xss512K \
+"
+EXPOSE 8083
+ENTRYPOINT java -Dloader.path=/var/lib/ws/lib,/var/lib/ws/common-libs -jar /$ARTIFACT.jar --spring.config.location=/var/lib/ws/springProfiles/test/application-ws.yaml

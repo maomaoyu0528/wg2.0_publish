@@ -1,0 +1,95 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: web-image-sm
+  labels:
+    release: monitor
+spec:
+  endpoints:
+    - path: /web/actuator/prometheus
+      port: svc-port
+      scheme: http
+      scrapeTimeout: 30s
+  namespaceSelector:
+    matchNames:
+      - default
+  selector:
+    matchLabels:
+      app: web-image
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: system-image-sm
+  labels:
+    release: monitor
+spec:
+  endpoints:
+    - path: /system/actuator/prometheus
+      port: svc-port
+      scheme: http
+      scrapeTimeout: 30s
+  namespaceSelector:
+    matchNames:
+      - default
+  selector:
+    matchLabels:
+      app: system-image
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ws-image-sm
+  labels:
+    release: monitor
+spec:
+  endpoints:
+    - path: /ws/actuator/prometheus
+      port: svc-port
+      scheme: http
+      scrapeTimeout: 30s
+  namespaceSelector:
+    matchNames:
+      - default
+  selector:
+    matchLabels:
+      app: ws-image
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: crash-image-sm
+  labels:
+    release: monitor
+spec:
+  endpoints:
+    - path: /crash/actuator/prometheus
+      port: svc-port
+      scheme: http
+      scrapeTimeout: 30s
+  namespaceSelector:
+    matchNames:
+      - default
+  selector:
+    matchLabels:
+      app: crash-image
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: threads-image-sm
+  labels:
+    release: monitor
+spec:
+  endpoints:
+    - path: /threads/actuator/prometheus
+      port: svc-port
+      scheme: http
+      scrapeTimeout: 30s
+  namespaceSelector:
+    matchNames:
+      - default
+  selector:
+    matchLabels:
+      app: threads-image

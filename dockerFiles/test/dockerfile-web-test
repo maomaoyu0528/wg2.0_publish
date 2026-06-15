@@ -1,0 +1,18 @@
+FROM base:1.0.0
+MAINTAINER wood
+VOLUME /tmp
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo 'Asia/Shanghai' >/etc/timezone
+RUN mkdir -p /var/lib/web
+ENV ARTIFACT=web
+COPY ././web/lib /var/lib/web/lib
+COPY ././common-libs /var/lib/web/common-libs
+COPY ././springProfiles /var/lib/web/springProfiles
+COPY ././web/*.jar /$ARTIFACT.jar
+ENV JAVA_OPTS="\
+-Xms2048m \
+-Xmx2048m \
+-Xss512K \
+"
+EXPOSE 8080
+ENTRYPOINT java -Dloader.path=/var/lib/web/lib,/var/lib/web/common-libs -jar /$ARTIFACT.jar --spring.config.location=/var/lib/web/springProfiles/test/application-web.yaml

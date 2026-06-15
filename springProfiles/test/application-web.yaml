@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: jk-wg-web
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://stake-test-8-instance-1.c9gw3vzizdxi.ap-southeast-1.rds.amazonaws.com:35879/mainnode?autoReconnect=true&useUnicode=true&rewriteBatchedStatements=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=GMT%2B8
+      username: wfdb
+      password: mk74eNmrYa90Wyi
+      minimum-idle: 20
+      maximum-pool-size: 100
+      auto-commit: true
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 3000
+      connection-test-query: select 1
+  data:
+    redis:
+      host: 172.31.18.231
+      port: 6379
+      password: 65zeNmrJKNZWyi
+      timeout: 2000
+      jedis:
+        pool:
+          max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
+          max-wait: 2000ms      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+          max-idle: 10      # 连接池中的最大空闲连接
+          min-idle: 10       # 连接池中的最小空闲连接
+  messages:
+    encoding: UTF-8
+    basename: messages/message
+  lifecycle:
+    timeout-per-shutdown-phase: 5s
+logging:
+  file:
+    path: /logs/${spring.application.name}
+  level:
+    root: ERROR
+  com.jk: ERROR
+system:
+  systemType: web
+server:
+  forward-headers-strategy: none
+  port: 8080
+  servlet:
+    context-path: /web
+  shutdown: graceful
+file-upload-path: files
+file-upload-maxSize: 1048576
+testMode: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,startup

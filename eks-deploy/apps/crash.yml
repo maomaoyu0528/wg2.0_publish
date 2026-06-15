@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crash-image
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: crash-image
+  template:
+    metadata:
+      labels:
+        app: crash-image
+    spec:
+      containers:
+      - name: crash-image
+        image: 912643663034.dkr.ecr.ap-southeast-1.amazonaws.com/crash-image-dapi:202306261526
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 2048Mi
+        livenessProbe:
+          httpGet:
+            path: /crash/actuator/health/liveness
+            port: 8084
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /crash/actuator/health/readiness
+            port: 8084
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        startupProbe:
+          httpGet:
+            path: /crash/actuator/health/liveness
+            port: 8084
+          failureThreshold: 30
+          periodSeconds: 10
+        ports:
+        - containerPort: 8084
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: crash-image-svc
+  labels:
+    app: crash-image
+spec:
+  selector:
+    app: crash-image
+  ports:
+    - protocol: TCP
+      port: 8084
+      targetPort: 8084
+      name: svc-port

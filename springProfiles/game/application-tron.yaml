@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: jk-wg-tron
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://winwinrds-1.cc2dgidm7d6l.ap-southeast-1.rds.amazonaws.com:35879/mainnode?autoReconnect=true&useUnicode=true&rewriteBatchedStatements=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=GMT%2B8
+      username: funny
+      password: mk74eNmrYa90Wyi
+      minimum-idle: 5
+      maximum-pool-size: 20
+      auto-commit: true
+      idle-timeout: 50000
+      max-lifetime: 60000
+      connection-timeout: 3000
+      connection-test-query: select 1
+  data:
+    redis:
+      host: redisnew.5da26e.ng.0001.apse1.cache.amazonaws.com
+      port: 6379
+      timeout: 2000
+      jedis:
+        pool:
+          max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
+          max-wait: 2000ms      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+          max-idle: 20      # 连接池中的最大空闲连接
+          min-idle: 10       # 连接池中的最小空闲连接
+  messages:
+    encoding: UTF-8
+    basename: messages/message
+  lifecycle:
+    timeout-per-shutdown-phase: 5s
+logging:
+  file:
+    path: /logs/${spring.application.name}
+  level:
+    root: ERROR
+  com.jk: ERROR
+system:
+  systemType: tron
+server:
+  port: 8072
+  servlet:
+    context-path: /
+  shutdown: graceful
+file-upload-path: files
+file-upload-maxSize: 1048576
+testMode : true
+
+management:
+  health:
+    db:
+      enabled: false
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    export:
+      prometheus:
+        enabled: true
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      enabled: true
+      show-details: always
+      group:
+        readiness:
+          include: ping
+        liveness:
+          include: "*"
+          exclude: ${management.endpoint.health.group.readiness.include}
+trc:
+  private:
+    key: c4641f97a758cac429cb864056f0d88a6088cbddd8ec3877548dc7a985c8a0c4
+  default:
+    owner:
+      address: TMhASJtiiHrqoN92gs1XzmWL2U8kZo86M4

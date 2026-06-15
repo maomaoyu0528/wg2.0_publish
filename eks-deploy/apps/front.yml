@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-image
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front-image
+  template:
+    metadata:
+      labels:
+        app: front-image
+    spec:
+      containers:
+      - name: front-image
+        image: 912643663034.dkr.ecr.ap-southeast-1.amazonaws.com/front-image-dapi:202306261523
+        resources:
+          requests:
+            cpu: 500m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1024Mi
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        volumeMounts:
+          - name: nginx-conf
+            mountPath: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+          - name: static-storage
+            mountPath: /usr/share/nginx/efs
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+            defaultMode: 420
+        - name: static-storage
+          persistentVolumeClaim:
+            claimName: front-efs-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-image-svc
+  # annotations:
+  #   service.beta.kubernetes.io/aws-load-balancer-type: external
+  #   service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+  #   service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+spec:
+  selector:
+    app: front-image
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: front-efs-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: 1Gi

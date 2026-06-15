@@ -1,0 +1,18 @@
+FROM base:1.0.0
+MAINTAINER wood
+VOLUME /tmp
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo 'Asia/Shanghai' >/etc/timezone
+RUN mkdir -p /var/lib/system
+ENV ARTIFACT=system
+COPY ././system/lib /var/lib/system/lib
+COPY ././common-libs /var/lib/system/common-libs
+COPY ././springProfiles /var/lib/system/springProfiles
+COPY ././system/*.jar /$ARTIFACT.jar
+ENV JAVA_OPTS="\
+-Xms2048m \
+-Xmx2048m \
+-Xss512K \
+"
+EXPOSE 8081
+ENTRYPOINT java -Dloader.path=/var/lib/system/lib,/var/lib/system/common-libs -jar /$ARTIFACT.jar --spring.config.location=/var/lib/system/springProfiles/game/application-system.yaml

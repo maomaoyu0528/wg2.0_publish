@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tron-image
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: tron-image
+  template:
+    metadata:
+      labels:
+        app: tron-image
+    spec:
+      containers:
+      - name: tron-image
+        image: 912643663034.dkr.ecr.ap-southeast-1.amazonaws.com/tron-image-game:202503151548
+        resources:
+          requests:
+            cpu: 300m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 4096Mi
+        livenessProbe:
+          httpGet:
+            path: /tron/actuator/health/liveness
+            port: 8072
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /tron/actuator/health/readiness
+            port: 8072
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        startupProbe:
+          httpGet:
+            path: /tron/actuator/health/liveness
+            port: 8072
+          failureThreshold: 30
+          periodSeconds: 10
+        ports:
+        - containerPort: 8071
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tron-image-svc
+  labels:
+    app: tron-image
+spec:
+  selector:
+    app: tron-image
+  ports:
+    - protocol: TCP
+      port: 8072
+      targetPort: 8072
+      name: svc-port

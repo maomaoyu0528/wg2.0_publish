@@ -1,0 +1,41 @@
+def currentDate = new Date(currentBuild.startTimeInMillis)
+def formattedDate = currentDate.format('yyyyMMddHHmm')
+
+def imageRepo = "551987061454.dkr.ecr.ap-southeast-1.amazonaws.com/"
+
+def frontImageName = "front-image-bigcast1:"+ formattedDate
+def frontDockerFileName = "dockerfile-front-qiangge"
+
+pipeline {
+    agent any
+    stages {
+        stage('check out') {
+            steps{
+                echo "${env.WORKSPACE}"
+                git url: "https://github.com/maomaoyu0528/saas_10.0_static.git",
+                        credentialsId: "34812f38-b441-4436-930f-aa956bdc8d8d",
+                        branch: "main"
+            }
+        }
+        stage('docker build') {
+            steps {
+                script {
+                    def workspace = "${env.WORKSPACE}"
+                    echo "workspace is :${workspace}"
+                    echo "Your build image is ${params.imageBuild}"
+                    docker.build(imageRepo+frontImageName,"-f "+workspace+"/dockerFiles/"+frontDockerFileName+" .")
+                }
+            }
+        }
+        stage('docker push') {
+            steps {
+                script {
+                    echo "Your push image is ${frontImageName}"
+                    echo "this time,push image tag Version is :${formattedDate}"
+                    echo "front image detail: ${imageRepo}${frontImageName}"
+                    docker.image(imageRepo+frontImageName).push(formattedDate)
+                }
+            }
+        }
+    }
+}

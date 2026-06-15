@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ton-image
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: ton-image
+  template:
+    metadata:
+      labels:
+        app: ton-image
+    spec:
+      containers:
+      - name: ton-image
+        image: 912643663034.dkr.ecr.ap-southeast-1.amazonaws.com/ton-image-game:202306261526
+        resources:
+          requests:
+            cpu: 300m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 4096Mi
+        livenessProbe:
+          httpGet:
+            path: /ton/actuator/health/liveness
+            port: 8071
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /ton/actuator/health/readiness
+            port: 8071
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        startupProbe:
+          httpGet:
+            path: /ton/actuator/health/liveness
+            port: 8071
+          failureThreshold: 30
+          periodSeconds: 10
+        ports:
+        - containerPort: 8071
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ton-image-svc
+  labels:
+    app: ton-image
+spec:
+  selector:
+    app: ton-image
+  ports:
+    - protocol: TCP
+      port: 8071
+      targetPort: 8071
+      name: svc-port

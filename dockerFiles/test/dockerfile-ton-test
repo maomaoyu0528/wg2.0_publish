@@ -1,0 +1,18 @@
+FROM base:1.0.0
+MAINTAINER wood
+VOLUME /tmp
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo 'Asia/Shanghai' >/etc/timezone
+RUN mkdir -p /var/lib/ton
+ENV ARTIFACT=ton
+COPY ././ton/lib /var/lib/ton/lib
+COPY ././common-libs /var/lib/ton/common-libs
+COPY ././springProfiles /var/lib/ton/springProfiles
+COPY ././ton/*.jar /$ARTIFACT.jar
+ENV JAVA_OPTS="\
+-Xms2048m \
+-Xmx2048m \
+-Xss512K \
+"
+EXPOSE 8081
+ENTRYPOINT java -Dloader.path=/var/lib/ton/lib,/var/lib/ton/common-libs -jar /$ARTIFACT.jar --spring.config.location=/var/lib/ton/springProfiles/test/application-ton.yaml

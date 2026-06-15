@@ -1,0 +1,14 @@
+pipeline {
+    agent any
+    stages {
+        stage('front git pull') {
+            steps {
+                dir('/home/ubuntu/efs/dynamic_provisioning/pvc-ea676160-d947-4152-9c98-36f82ad9bdc5/saas_10.0_static/') {
+                    sh "git pull"
+                    echo "git pull success!!"
+                }
+            }
+        }
+    }
+}
+
