@@ -5,7 +5,7 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://winwinrds-1.cc2dgidm7d6l.ap-southeast-1.rds.amazonaws.com:35879/wg2.0_mainnode?autoReconnect=true&useUnicode=true&rewriteBatchedStatements=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=GMT%2B8
+      jdbc-url: jdbc:mysql://womenrds-1.cc2dgidm7d6l.ap-southeast-1.rds.amazonaws.com:35879/wg2.0_mainnode?autoReconnect=true&useUnicode=true&rewriteBatchedStatements=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
       username: wfdb2
       password: mk74eNmrYa90Wyi
       minimum-idle: 20
