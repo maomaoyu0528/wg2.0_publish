@@ -75,24 +75,29 @@
     安装参考命令
 
     ```
-    curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+    # 1. 下载并解压到 /tmp 目录
+    curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz" | tar xz -C /tmp
+
+    # 2. 移动到系统可执行路径
     sudo mv /tmp/eksctl /usr/local/bin
+
+    # 3. 验证安装
+    eksctl version
     ```
 
 3. 安装kubectl
     官方文档：https://kubernetes.io/docs/tasks/tools/#kubectl
 
-    安装参考命令
+    安装参考命令(推荐)
 
     ```
+    # 1. 下载最新稳定的 kubectl 二进制文件
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-    ```
 
-    ```
+    # 2. 安装并赋予执行权限
     sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-    ```
 
-    ```
+    # 3. 验证安装
     kubectl version --client
     ```
 
@@ -119,13 +124,16 @@
      curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
      chmod 700 get_helm.sh
      ./get_helm.sh
+     helm version
     ```
 
 5. 安装python3
     Linux系统一般默认有安装python，但如果是python2，请另安装python3；ubuntu22.04，安装命令如下：
 
     ```
-    sudo apt install python-is-python3 python3-pip
+    sudo apt update && sudo apt install -y python-is-python3 python3-pip
+    python --version   # 应输出 Python 3.x.x
+    pip --version      # 应输出 pip 版本信息
     ```
 
     官方文档：https://www.python.org/downloads/
@@ -336,7 +344,9 @@ aws eks update-kubeconfig --region [区域名] --name [集群名称]
   kubectl delete pdb ebs-csi-controller -n kube-system
   eksctl delete cluster [集群名称]
   eg:
-  eksctl delete cluster eks-game
+  eksctl delete cluster eks-fg
+  强制删除
+  eksctl delete cluster eks-fg --disable-nodegroup-eviction 
   ```
 
 - 删除名为EFS-SecurityGroup的安全组，EFS文件系统。修改`components/utils/remove_efs.py`文件中的profile名称，集群名和区域名称，然后执行：

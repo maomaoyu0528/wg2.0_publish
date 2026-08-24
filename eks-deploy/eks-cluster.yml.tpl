@@ -24,9 +24,9 @@ addons:
 nodeGroups:
   - name: eks-ng-1
     instanceType: t3.xlarge
-    minSize: 8
-    maxSize: 16
-    desiredCapacity: 8
+    minSize: 2
+    maxSize: 4
+    desiredCapacity: 2
     privateNetworking: true
     ssh:
       publicKeyPath: ./id_rsa.pub

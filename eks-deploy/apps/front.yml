@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: front-image
-        image: 912643663034.dkr.ecr.ap-southeast-1.amazonaws.com/front-image-dapi:202306261523
+        image: 048607916782.dkr.ecr.ap-southeast-1.amazonaws.com/front-image-game:20260824
         resources:
           requests:
             cpu: 500m
